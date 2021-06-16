@@ -69,6 +69,11 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
         private static Dictionary<string, bool> AvailableDatabases;
         private static TraceEventListener TraceListener;
 
+        //Kerberos variables
+        public static readonly string DomainProviderName = null;
+        internal static readonly string DomainPass = null;
+        public static readonly bool IsKerberos = false;
+
         static DataTestUtility()
         {
             Config c = Config.Load();
@@ -95,6 +100,9 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
             IsDNSCachingSupportedTR = c.IsDNSCachingSupportedTR;
             EnclaveAzureDatabaseConnString = c.EnclaveAzureDatabaseConnString;
             UserManagedIdentityClientId = c.UserManagedIdentityClientId;
+            DomainPass = c.DomainPass;
+            DomainProviderName = c.DomainProvider;
+            IsKerberos = c.IsKerberos;
 
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
 
@@ -208,6 +216,11 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
 
             return result.AccessToken;
         });
+
+        public static bool IsKerberosTest()
+        {
+            return IsKerberos;
+        }
 
         public static bool IsDatabasePresent(string name)
         {
