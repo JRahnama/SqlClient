@@ -74,8 +74,7 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
         {
             foreach (var cnnString in DataTestUtility.ConnectionStrings)
             {
-                yield return new object[] { cnnString, false };
-                yield return new object[] { cnnString, true };
+                yield return new object[] { cnnString};
             }
         }
 
