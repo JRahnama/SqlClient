@@ -13,7 +13,7 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
         [ClassData(typeof(ConnectionStringsProvider))]
         public void IsKerBerosSetupTest(string connection)
         {
-            Task t = Task.Run(() => KerberosTicketManagemnt.Init(DataTestUtility.DomainProviderName)).ContinueWith((i) =>
+            Task t = Task.Run(() => KerberosTicketManagemnt.Init(DataTestUtility.KerberosDomainName)).ContinueWith((i) =>
             {
                 using var conn = new SqlConnection(connection);
                 try
@@ -46,8 +46,8 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
             });
 
             //makes sure that kerberos is initiated for other tests to pass
-            KerberosTicketManagemnt.Init(DataTestUtility.DomainProviderName);
-            Task t1 = Task.Run(() => KerberosTicketManagemnt.Init(DataTestUtility.DomainProviderName)).ContinueWith((i) =>
+            KerberosTicketManagemnt.Init(DataTestUtility.KerberosDomainName);
+            Task t1 = Task.Run(() => KerberosTicketManagemnt.Init(DataTestUtility.KerberosDomainName)).ContinueWith((i) =>
             {
                 using var conn = new SqlConnection(connection);
                 try
@@ -74,7 +74,7 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
         {
             foreach (var cnnString in DataTestUtility.ConnectionStrings)
             {
-                yield return new object[] { cnnString};
+                yield return new object[] { cnnString };
             }
         }
 

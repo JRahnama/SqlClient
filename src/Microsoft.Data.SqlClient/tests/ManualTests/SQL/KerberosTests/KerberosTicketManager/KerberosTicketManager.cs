@@ -32,7 +32,7 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
                     StartInfo =
                     {
                         FileName = s_cmdPrompt,
-                        Arguments = isIniti? $"-c {command}" : $"-c {command} -p:{DataTestUtility.DomainPass}"
+                        Arguments = isIniti? $"-c {command}" : $"-c {command} -p:{DataTestUtility.KerberosDomainPassword}"
                     }
                 };
                 proc.Start();

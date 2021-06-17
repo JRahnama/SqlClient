@@ -70,8 +70,8 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
         private static TraceEventListener TraceListener;
 
         //Kerberos variables
-        public static readonly string DomainProviderName = null;
-        internal static readonly string DomainPass = null;
+        public static readonly string KerberosDomainName = null;
+        internal static readonly string KerberosDomainPassword = null;
         public static readonly bool IsKerberos = false;
 
         static DataTestUtility()
@@ -100,9 +100,8 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
             IsDNSCachingSupportedTR = c.IsDNSCachingSupportedTR;
             EnclaveAzureDatabaseConnString = c.EnclaveAzureDatabaseConnString;
             UserManagedIdentityClientId = c.UserManagedIdentityClientId;
-            DomainPass = c.DomainPass;
-            DomainProviderName = c.DomainProvider;
-            IsKerberos = c.IsKerberos;
+            KerberosDomainPassword = c.KerberosDomainPassword;
+            KerberosDomainName = c.KerberosDomainName;
 
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
 
@@ -155,6 +154,11 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
                     AEConnStrings.Add(TCPConnectionString);
                     AEConnStringsSetup.Add(TCPConnectionString);
                 }
+            }
+
+            if (!string.IsNullOrEmpty(KerberosDomainName) && !string.IsNullOrEmpty(KerberosDomainPassword))
+            {
+                IsKerberos = true;
             }
         }
 
