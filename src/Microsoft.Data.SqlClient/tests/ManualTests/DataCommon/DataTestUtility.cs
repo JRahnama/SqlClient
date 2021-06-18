@@ -70,7 +70,7 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
         private static TraceEventListener TraceListener;
 
         //Kerberos variables
-        public static readonly string KerberosDomainName = null;
+        public static readonly string KerberosDomainUser = null;
         internal static readonly string KerberosDomainPassword = null;
         public static readonly bool IsKerberos = false;
 
@@ -101,7 +101,7 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
             EnclaveAzureDatabaseConnString = c.EnclaveAzureDatabaseConnString;
             UserManagedIdentityClientId = c.UserManagedIdentityClientId;
             KerberosDomainPassword = c.KerberosDomainPassword;
-            KerberosDomainName = c.KerberosDomainName;
+            KerberosDomainUser = c.KerberosDomainUser;
 
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
 
@@ -156,7 +156,7 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
                 }
             }
 
-            if (!string.IsNullOrEmpty(KerberosDomainName) && !string.IsNullOrEmpty(KerberosDomainPassword))
+            if (!string.IsNullOrEmpty(KerberosDomainUser) && !string.IsNullOrEmpty(KerberosDomainPassword))
             {
                 IsKerberos = true;
             }

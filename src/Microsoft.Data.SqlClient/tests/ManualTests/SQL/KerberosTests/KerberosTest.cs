@@ -13,7 +13,7 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
         [ClassData(typeof(ConnectionStringsProvider))]
         public void IsKerBerosSetupTest(string connection)
         {
-            Task t = Task.Run(() => KerberosTicketManagemnt.Init(DataTestUtility.KerberosUserName)).ContinueWith((i) =>
+            Task t = Task.Run(() => KerberosTicketManagemnt.Init(DataTestUtility.KerberosDomainUser)).ContinueWith((i) =>
             {
                 using var conn = new SqlConnection(connection);
                 try
@@ -46,8 +46,8 @@ namespace Microsoft.Data.SqlClient.ManualTesting.Tests
             });
 
             //makes sure that kerberos is initiated for other tests to pass
-            KerberosTicketManagemnt.Init(DataTestUtility.KerberosUserName);
-            Task t1 = Task.Run(() => KerberosTicketManagemnt.Init(DataTestUtility.KerberosUserName)).ContinueWith((i) =>
+            KerberosTicketManagemnt.Init(DataTestUtility.KerberosDomainUser);
+            Task t1 = Task.Run(() => KerberosTicketManagemnt.Init(DataTestUtility.KerberosDomainUser)).ContinueWith((i) =>
             {
                 using var conn = new SqlConnection(connection);
                 try
