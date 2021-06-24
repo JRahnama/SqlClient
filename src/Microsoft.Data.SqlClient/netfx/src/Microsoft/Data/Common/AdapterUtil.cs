@@ -911,6 +911,10 @@ namespace Microsoft.Data.Common
         {
             return ADP.Argument(StringsHelper.GetString(Strings.ADP_InvalidMinMaxPoolSizeValues));
         }
+        static internal ArgumentException InvalidConnectionIdleLifetimeValues()
+        {
+            return ADP.Argument(StringsHelper.GetString(Strings.ADP_InvalidConnectionIdleLifetimeValue));
+        }
         static internal ArgumentException ConvertFailed(Type fromType, Type toType, Exception innerException)
         {
             return ADP.Argument(StringsHelper.GetString(Strings.SqlConvert_ConvertFailed, fromType.FullName, toType.FullName), innerException);

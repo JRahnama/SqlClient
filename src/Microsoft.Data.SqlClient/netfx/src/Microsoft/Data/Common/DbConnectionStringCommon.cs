@@ -1197,6 +1197,7 @@ namespace Microsoft.Data.Common
         internal static readonly bool TransparentNetworkIPResolution = LocalAppContextSwitches.DisableTNIRByDefault ? false : true;
         internal const int MaxPoolSize = 100;
         internal const int MinPoolSize = 0;
+        internal const int ConnectionIdleLifetime = 6;
         internal const string NetworkLibrary = _emptyString;
         internal const int PacketSize = 8000;
         internal const string Password = _emptyString;

@@ -861,6 +861,7 @@ namespace Microsoft.Data.Common
         internal const bool MultiSubnetFailover = false;
         internal const int MaxPoolSize = 100;
         internal const int MinPoolSize = 0;
+        internal const int ConnectionIdleLifetime = 6; //6 minutes
         internal const int PacketSize = 8000;
         internal const string Password = _emptyString;
         internal const bool PersistSecurityInfo = false;

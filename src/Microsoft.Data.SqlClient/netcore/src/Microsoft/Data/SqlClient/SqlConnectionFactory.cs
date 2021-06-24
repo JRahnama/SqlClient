@@ -191,6 +191,7 @@ namespace Microsoft.Data.SqlClient
                                                 opt.IntegratedSecurity,
                                                 opt.MinPoolSize,
                                                 opt.MaxPoolSize,
+                                                opt.ConnectionIdleLifetime,
                                                 connectionTimeout,
                                                 opt.LoadBalanceTimeout,
                                                 opt.Enlist);

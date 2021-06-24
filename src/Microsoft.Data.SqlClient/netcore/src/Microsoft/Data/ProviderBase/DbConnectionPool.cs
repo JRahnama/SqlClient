@@ -524,6 +524,11 @@ namespace Microsoft.Data.ProviderBase
             get { return PoolGroupOptions.MinPoolSize; }
         }
 
+        private int ConnectionIdleLifetime
+        {
+            get { return PoolGroupOptions.ConnectionIdleLifetime; }
+        }
+
         internal int ObjectID
         {
             get
