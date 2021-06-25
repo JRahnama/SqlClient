@@ -933,6 +933,7 @@ namespace Microsoft.Data.Common
         internal const string MaxPoolSize = "Max Pool Size";
         internal const string Pooling = "Pooling";
         internal const string MinPoolSize = "Min Pool Size";
+        internal const string ConnectionIdleLifetime = "Connection Idle Lifetime";
 #if NETCOREAPP
         internal const string PoolBlockingPeriod = "Pool Blocking Period";
 #endif

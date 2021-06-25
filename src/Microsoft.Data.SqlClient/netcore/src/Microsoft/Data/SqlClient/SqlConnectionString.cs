@@ -692,6 +692,7 @@ namespace Microsoft.Data.SqlClient
                     { KEY.MARS, KEY.MARS },
                     { KEY.Max_Pool_Size, KEY.Max_Pool_Size },
                     { KEY.Min_Pool_Size, KEY.Min_Pool_Size },
+                    {KEY.Connection_Idle_Lifetime,KEY.Connection_Idle_Lifetime },
                     { KEY.MultiSubnetFailover, KEY.MultiSubnetFailover },
                     { KEY.Network_Library, KEY.Network_Library },
                     { KEY.Packet_Size, KEY.Packet_Size },

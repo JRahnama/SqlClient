@@ -33,6 +33,7 @@ namespace Microsoft.Data.SqlClient
             Pooling,
             MinPoolSize,
             MaxPoolSize,
+            ConnectionIdleLifetime,
 #if NETCOREAPP
             PoolBlockingPeriod,
 #endif
@@ -90,6 +91,7 @@ namespace Microsoft.Data.SqlClient
         private int _loadBalanceTimeout = DbConnectionStringDefaults.LoadBalanceTimeout;
         private int _maxPoolSize = DbConnectionStringDefaults.MaxPoolSize;
         private int _minPoolSize = DbConnectionStringDefaults.MinPoolSize;
+        private int _connectionIdleLifetime = DbConnectionStringDefaults.ConnectionIdleLifetime;
         private int _packetSize = DbConnectionStringDefaults.PacketSize;
         private int _connectRetryCount = DbConnectionStringDefaults.ConnectRetryCount;
         private int _connectRetryInterval = DbConnectionStringDefaults.ConnectRetryInterval;
@@ -131,6 +133,7 @@ namespace Microsoft.Data.SqlClient
             validKeywords[(int)Keywords.LoadBalanceTimeout] = DbConnectionStringKeywords.LoadBalanceTimeout;
             validKeywords[(int)Keywords.MaxPoolSize] = DbConnectionStringKeywords.MaxPoolSize;
             validKeywords[(int)Keywords.MinPoolSize] = DbConnectionStringKeywords.MinPoolSize;
+            validKeywords[(int)Keywords.ConnectionIdleLifetime] = DbConnectionStringKeywords.ConnectionIdleLifetime;
             validKeywords[(int)Keywords.MultipleActiveResultSets] = DbConnectionStringKeywords.MultipleActiveResultSets;
             validKeywords[(int)Keywords.MultiSubnetFailover] = DbConnectionStringKeywords.MultiSubnetFailover;
             //          validKeywords[(int)Keywords.NamedConnection]          = DbConnectionStringKeywords.NamedConnection;
@@ -177,6 +180,7 @@ namespace Microsoft.Data.SqlClient
             hash.Add(DbConnectionStringKeywords.MultipleActiveResultSets, Keywords.MultipleActiveResultSets);
             hash.Add(DbConnectionStringKeywords.MaxPoolSize, Keywords.MaxPoolSize);
             hash.Add(DbConnectionStringKeywords.MinPoolSize, Keywords.MinPoolSize);
+            hash.Add(DbConnectionStringKeywords.ConnectionIdleLifetime, Keywords.ConnectionIdleLifetime);
             hash.Add(DbConnectionStringKeywords.MultiSubnetFailover, Keywords.MultiSubnetFailover);
             //          hash.Add(DbConnectionStringKeywords.NamedConnection,          Keywords.NamedConnection);
             hash.Add(DbConnectionStringKeywords.PacketSize, Keywords.PacketSize);
@@ -335,7 +339,9 @@ namespace Microsoft.Data.SqlClient
                             IPAddressPreference = ConvertToIPAddressPreference(keyword, value);
                             break;
 #if NETCOREAPP
-                        case Keywords.PoolBlockingPeriod: PoolBlockingPeriod = ConvertToPoolBlockingPeriod(keyword, value); break;
+                        case Keywords.PoolBlockingPeriod:
+                            PoolBlockingPeriod = ConvertToPoolBlockingPeriod(keyword, value);
+                            break;
 #endif
                         case Keywords.Encrypt:
                             Encrypt = ConvertToBoolean(value);
@@ -691,6 +697,23 @@ namespace Microsoft.Data.SqlClient
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ConnectionIdleLifetime
+        {
+            get { return _connectionIdleLifetime; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw ADP.InvalidConnectionOptionValue(DbConnectionStringKeywords.ConnectionIdleLifetime);
+                }
+                SetValue(DbConnectionStringKeywords.ConnectionIdleLifetime, value);
+                _connectionIdleLifetime = value;
+            }
+        }
+
         /// <include file='../../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionStringBuilder.xml' path='docs/members[@name="SqlConnectionStringBuilder"]/MultipleActiveResultSets/*' />
         public bool MultipleActiveResultSets
         {
@@ -947,7 +970,8 @@ namespace Microsoft.Data.SqlClient
                 case Keywords.AttachDBFilename:
                     return AttachDBFilename;
 #if NETCOREAPP
-                case Keywords.PoolBlockingPeriod: return PoolBlockingPeriod;
+                case Keywords.PoolBlockingPeriod:
+                    return PoolBlockingPeriod;
 #endif
                 case Keywords.CommandTimeout:
                     return CommandTimeout;
@@ -975,6 +999,8 @@ namespace Microsoft.Data.SqlClient
                     return MaxPoolSize;
                 case Keywords.MinPoolSize:
                     return MinPoolSize;
+                case Keywords.ConnectionIdleLifetime:
+                    return ConnectionIdleLifetime;
                 case Keywords.MultiSubnetFailover:
                     return MultiSubnetFailover;
                 //          case Keywords.NamedConnection:          return NamedConnection;
@@ -1106,6 +1132,9 @@ namespace Microsoft.Data.SqlClient
                     break;
                 case Keywords.MinPoolSize:
                     _minPoolSize = DbConnectionStringDefaults.MinPoolSize;
+                    break;
+                case Keywords.ConnectionIdleLifetime:
+                    _connectionIdleLifetime = DbConnectionStringDefaults.ConnectionIdleLifetime;
                     break;
                 case Keywords.MultiSubnetFailover:
                     _multiSubnetFailover = DbConnectionStringDefaults.MultiSubnetFailover;
