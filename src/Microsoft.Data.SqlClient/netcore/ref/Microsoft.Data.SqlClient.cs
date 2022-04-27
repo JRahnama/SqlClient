@@ -383,6 +383,8 @@ namespace Microsoft.Data.SqlClient
         /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlBulkCopyColumnOrderHintCollection.xml' path='docs/members[@name="SqlBulkCopyColumnOrderHintCollection"]/RemoveAt/*'/>
         public new void RemoveAt(int index) { }
     }
+
+
     /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlBulkCopyOptions.xml' path='docs/members[@name="SqlBulkCopyOptions"]/SqlBulkCopyOptions/*'/>
     [System.FlagsAttribute]
     public enum SqlBulkCopyOptions
@@ -500,6 +502,23 @@ namespace Microsoft.Data.SqlClient
         /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionIPAddressPreference.xml' path='docs/members[@name="SqlConnectionIPAddressPreference"]/UsePlatformDefault/*' />
         UsePlatformDefault = 2
     }
+    /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/SqlConnectionEncryptionOption/*'/>
+    public enum SqlConnectionEncryptionOption
+    {
+        /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/False/*' />
+        False = 0,
+        /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/No/*' />
+        No = 1,
+        /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/Optional/*' />
+        Optional = 2,
+        /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/True/*' />
+        True = 3,
+        /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/Mandatory/*' />
+        Mandatory,
+        /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/Strict/*' />
+        Strict
+    }
+
     /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlColumnEncryptionCertificateStoreProvider.xml' path='docs/members[@name="SqlColumnEncryptionCertificateStoreProvider"]/SqlColumnEncryptionCertificateStoreProvider/*'/>
     public partial class SqlColumnEncryptionCertificateStoreProvider : Microsoft.Data.SqlClient.SqlColumnEncryptionKeyStoreProvider
     {
@@ -994,7 +1013,15 @@ namespace Microsoft.Data.SqlClient
         /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionStringBuilder.xml' path='docs/members[@name="SqlConnectionStringBuilder"]/Encrypt/*'/>
         [System.ComponentModel.DisplayNameAttribute("Encrypt")]
         [System.ComponentModel.RefreshPropertiesAttribute(System.ComponentModel.RefreshProperties.All)]
-        public bool Encrypt { get { throw null; } set { } }
+        public SqlConnectionEncryptionOption Encrypt { get { throw null; } set { } }
+        /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionStringBuilder.xml' path='docs/members[@name="SqlConnectionStringBuilder"]/IsTDSS/*'/>
+        [System.ComponentModel.DisplayNameAttribute("IsTDSS")]
+        [System.ComponentModel.RefreshPropertiesAttribute(System.ComponentModel.RefreshProperties.All)]
+        public bool IsTDSS { get { throw null; } set { } }
+        /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionStringBuilder.xml' path='docs/members[@name="SqlConnectionStringBuilder"]/HostNameInCertificate/*'/>
+        [System.ComponentModel.DisplayNameAttribute("Host Name In Certificate")]
+        [System.ComponentModel.RefreshPropertiesAttribute(System.ComponentModel.RefreshProperties.All)]
+        public string HostNameInCertificate { get { throw null; } set { } }
         /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionStringBuilder.xml' path='docs/members[@name="SqlConnectionStringBuilder"]/Enlist/*'/>
         [System.ComponentModel.DisplayNameAttribute("Enlist")]
         [System.ComponentModel.RefreshPropertiesAttribute(System.ComponentModel.RefreshProperties.All)]

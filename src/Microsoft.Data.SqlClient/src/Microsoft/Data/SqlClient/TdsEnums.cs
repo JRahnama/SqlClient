@@ -621,6 +621,7 @@ namespace Microsoft.Data.SqlClient
         public const uint SNI_SSL_VALIDATE_CERTIFICATE = 1;   // This enables validation of server certificate
         public const uint SNI_SSL_USE_SCHANNEL_CACHE = 2;     // This enables schannel session cache
         public const uint SNI_SSL_IGNORE_CHANNEL_BINDINGS = 0x10; // Used with SSL Provider, sent to SNIAddProvider in case of SQL Authentication & Encrypt.
+        public const uint SNI_SSL_SEND_ALPN_EXTENSION = 0x4000;   // This flag instructs SSL provider to send the ALPN extension in the ClientHello message
 
         public const string DEFAULT_ENGLISH_CODE_PAGE_STRING = "iso_1";
         public const short DEFAULT_ENGLISH_CODE_PAGE_VALUE = 1252;
@@ -1113,6 +1114,23 @@ namespace Microsoft.Data.SqlClient
 
         /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionAttestationProtocol.xml' path='docs/members[@name="SqlConnectionAttestationProtocol"]/HGS/*' />
         HGS = 3
+    }
+
+    /// <include file='../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/SqlConnectionEncryptionOptions/*'/>
+    public enum SqlConnectionEncryptionOption
+    {
+        /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/False/*' />
+        False = 0,
+        /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/No/*' />
+        No = 1,
+        /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/Optional/*' />
+        Optional = 2,
+        /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/True/*' />
+        True = 3,
+        /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/Mandatory/*' />
+        Mandatory,
+        /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionEncryptionOption.xml' path='docs/members[@name="SqlConnectionEncryptionOption"]/Strict/*' />
+        Strict
     }
 
     /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionIPAddressPreference.xml' path='docs/members[@name="SqlConnectionIPAddressPreference"]/SqlConnectionIPAddressPreference/*' />

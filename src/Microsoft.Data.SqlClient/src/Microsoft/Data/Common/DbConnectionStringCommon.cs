@@ -498,6 +498,22 @@ namespace Microsoft.Data.Common
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static bool IsValidConnectionStringEncryptionOption(SqlConnectionEncryptionOption value)
+        {
+            Debug.Assert(Enum.GetNames(typeof(SqlConnectionEncryptionOption)).Length == 6, "SqlConnectionEncryptionOptions enum has changed, update needed");
+            return value == SqlConnectionEncryptionOption.No ||
+                   value == SqlConnectionEncryptionOption.False ||
+                   value == SqlConnectionEncryptionOption.Optional ||
+                   value == SqlConnectionEncryptionOption.True ||
+                   value == SqlConnectionEncryptionOption.Mandatory ||
+                   value == SqlConnectionEncryptionOption.Strict;
+        }
+
+        /// <summary>
         /// Convert connection level column encryption setting value to string.
         /// </summary>
         /// <param name="value"></param>
@@ -696,6 +712,59 @@ namespace Microsoft.Data.Common
             }
         }
 
+        internal static bool TryToConvertToSqlConnectionEncryptionOption(string value, out SqlConnectionEncryptionOption result)
+        {
+            if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.False)))
+            {
+                result = SqlConnectionEncryptionOption.False;
+                return true;
+            }
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.No)))
+            {
+                result = SqlConnectionEncryptionOption.No;
+                return true;
+            }
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.Optional)))
+            {
+                result = SqlConnectionEncryptionOption.Optional;
+                return true;
+            }
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.True)))
+            {
+                result = SqlConnectionEncryptionOption.True;
+                return true;
+            }
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.Mandatory)))
+            {
+                result = SqlConnectionEncryptionOption.Mandatory;
+                return true;
+            }
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.Strict)))
+            {
+                result = SqlConnectionEncryptionOption.Strict;
+                return true;
+            }
+            else
+            {
+                result = DbConnectionStringDefaults.Encrypt;
+                return false;
+            }
+        }
+
+        internal static string SqlEncryptionOptionToString(SqlConnectionEncryptionOption value)
+        {
+            return value switch
+            {
+                SqlConnectionEncryptionOption.False => nameof(SqlConnectionEncryptionOption.False),
+                SqlConnectionEncryptionOption.No => nameof(SqlConnectionEncryptionOption.No),
+                SqlConnectionEncryptionOption.Optional => nameof(SqlConnectionEncryptionOption.Optional),
+                SqlConnectionEncryptionOption.True => nameof(SqlConnectionEncryptionOption.True),
+                SqlConnectionEncryptionOption.Mandatory => nameof(SqlConnectionEncryptionOption.Mandatory),
+                SqlConnectionEncryptionOption.Strict => nameof(SqlConnectionEncryptionOption.Strict),
+                _ => null
+            };
+        }
+
         #region <<AttestationProtocol Utility>>
         /// <summary>
         ///  Convert a string value to the corresponding SqlConnectionAttestationProtocol
@@ -806,6 +875,65 @@ namespace Microsoft.Data.Common
                 else
                 {
                     throw ADP.InvalidEnumerationValue(typeof(SqlConnectionAttestationProtocol), (int)eValue);
+                }
+            }
+        }
+
+        internal static SqlConnectionEncryptionOption ConvertToSqlConnectionEncryptionOption(string keyword, object value)
+        {
+            if (value is null)
+            {
+                return DbConnectionStringDefaults.Encrypt;
+            }
+            if (value is string sValue)
+            {
+                // try again after remove leading & trailing whitespaces.
+                sValue = sValue.Trim();
+                if (TryToConvertToSqlConnectionEncryptionOption(sValue, out SqlConnectionEncryptionOption result))
+                {
+                    return result;
+                }
+                // string values must be valid
+                throw ADP.InvalidConnectionOptionValue(keyword);
+            }
+            else
+            {
+                // the value is not string, try other options
+                SqlConnectionEncryptionOption eValue;
+
+                if (value is SqlConnectionEncryptionOption protocol)
+                {
+                    eValue = protocol;
+                }
+                else if (value.GetType().IsEnum)
+                {
+                    // explicitly block scenarios in which user tries to use wrong enum types, like:
+                    // builder["SqlConnectionAttestationProtocol"] = EnvironmentVariableTarget.Process;
+                    // workaround: explicitly cast non-SqlConnectionAttestationProtocol enums to int
+                    throw ADP.ConvertFailed(value.GetType(), typeof(SqlConnectionEncryptionOption), null);
+                }
+                else
+                {
+                    try
+                    {
+                        // Enum.ToObject allows only integral and enum values (enums are blocked above), raising ArgumentException for the rest
+                        eValue = (SqlConnectionEncryptionOption)Enum.ToObject(typeof(SqlConnectionEncryptionOption), value);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        // to be consistent with the messages we send in case of wrong type usage, replace
+                        // the error with our exception, and keep the original one as inner one for troubleshooting
+                        throw ADP.ConvertFailed(value.GetType(), typeof(SqlConnectionEncryptionOption), e);
+                    }
+                }
+
+                if (IsValidConnectionStringEncryptionOption(eValue))
+                {
+                    return eValue;
+                }
+                else
+                {
+                    throw ADP.InvalidEnumerationValue(typeof(SqlConnectionEncryptionOption), (int)eValue);
                 }
             }
         }
@@ -947,7 +1075,9 @@ namespace Microsoft.Data.Common
 #endif
         internal const string CurrentLanguage = "";
         internal const string DataSource = "";
-        internal const bool Encrypt = true;
+        internal const SqlConnectionEncryptionOption Encrypt = SqlConnectionEncryptionOption.True;
+        internal const bool IsTDSS = false;
+        internal const string HostNameInCertificate = "";
         internal const bool Enlist = true;
         internal const string FailoverPartner = "";
         internal const string InitialCatalog = "";
@@ -1010,6 +1140,8 @@ namespace Microsoft.Data.Common
         internal const string ContextConnection = "Context Connection";
         internal const string CurrentLanguage = "Current Language";
         internal const string Encrypt = "Encrypt";
+        internal const string IsTDSS = "IsTDSS";
+        internal const string HostNameInCertificate = "Host Name In Certificate";
         internal const string FailoverPartner = "Failover Partner";
         internal const string InitialCatalog = "Initial Catalog";
         internal const string MultipleActiveResultSets = "Multiple Active Result Sets";
