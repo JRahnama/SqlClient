@@ -25,8 +25,7 @@ namespace Microsoft.Data.SqlClient.SNI
         private readonly string _targetServer;
         private readonly string _serverNameIndication;
         private readonly object _sendSync;
-        private bool _isTDSS;
-
+        private readonly bool _isTDS8;
         private Stream _stream;
         private NamedPipeClientStream _pipeStream;
         private SslOverTdsStream _sslOverTdsStream;
@@ -40,7 +39,7 @@ namespace Microsoft.Data.SqlClient.SNI
         private int _bufferSize = TdsEnums.DEFAULT_LOGIN_PACKET_SIZE;
         private readonly Guid _connectionId = Guid.NewGuid();
 
-        public SNINpHandle(string serverName, string pipeName, long timerExpire, bool isTDSS, string serverNameIndication)
+        public SNINpHandle(string serverName, string pipeName, long timerExpire, bool isTDS8, string serverNameIndication)
         {
             using (TrySNIEventScope.Create(nameof(SNINpHandle)))
             {
@@ -48,7 +47,7 @@ namespace Microsoft.Data.SqlClient.SNI
 
                 _sendSync = new object();
                 _targetServer = serverName;
-                _isTDSS = isTDSS;
+                _isTDS8 = isTDS8;
                 _serverNameIndication = serverNameIndication;
 
                 try
@@ -97,7 +96,7 @@ namespace Microsoft.Data.SqlClient.SNI
 
                 Stream stream = _pipeStream;
 
-                if (!_isTDSS)
+                if (!_isTDS8)
                 {
                     _sslOverTdsStream = new SslOverTdsStream(_pipeStream, _connectionId);
                     stream = _sslOverTdsStream;
@@ -323,7 +322,7 @@ namespace Microsoft.Data.SqlClient.SNI
                 _validateCert = (options & TdsEnums.SNI_SSL_VALIDATE_CERTIFICATE) != 0;
                 try
                 {
-                    if (_isTDSS)
+                    if (_isTDS8)
                     {
 #if NETCOREAPP
                         SslApplicationProtocol TDS8 = new("tds/8.0");

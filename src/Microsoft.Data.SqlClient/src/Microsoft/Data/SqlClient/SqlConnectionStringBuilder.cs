@@ -46,7 +46,7 @@ namespace Microsoft.Data.SqlClient
             Replication,
             ConnectTimeout,
             Encrypt,
-            IsTDSS,
+            IsTDS8,
             HostNameInCertificate,
             TrustServerCertificate,
             LoadBalanceTimeout,
@@ -108,7 +108,7 @@ namespace Microsoft.Data.SqlClient
         private int _connectRetryCount = DbConnectionStringDefaults.ConnectRetryCount;
         private int _connectRetryInterval = DbConnectionStringDefaults.ConnectRetryInterval;
         private SqlConnectionEncryptionOption _encrypt = DbConnectionStringDefaults.Encrypt;
-        private bool _isTdss = DbConnectionStringDefaults.IsTDSS;
+        private bool _isTDS8 = DbConnectionStringDefaults.IsTDS8;
         private string _hostNameInCertificate = DbConnectionStringDefaults.HostNameInCertificate;
         private bool _trustServerCertificate = DbConnectionStringDefaults.TrustServerCertificate;
         private bool _enlist = DbConnectionStringDefaults.Enlist;
@@ -153,7 +153,7 @@ namespace Microsoft.Data.SqlClient
             validKeywords[(int)Keywords.CurrentLanguage] = DbConnectionStringKeywords.CurrentLanguage;
             validKeywords[(int)Keywords.DataSource] = DbConnectionStringKeywords.DataSource;
             validKeywords[(int)Keywords.Encrypt] = DbConnectionStringKeywords.Encrypt;
-            validKeywords[(int)Keywords.IsTDSS] = DbConnectionStringKeywords.IsTDSS;
+            validKeywords[(int)Keywords.IsTDS8] = DbConnectionStringKeywords.IsTDS8;
             validKeywords[(int)Keywords.HostNameInCertificate] = DbConnectionStringKeywords.HostNameInCertificate;
             validKeywords[(int)Keywords.Enlist] = DbConnectionStringKeywords.Enlist;
             validKeywords[(int)Keywords.FailoverPartner] = DbConnectionStringKeywords.FailoverPartner;
@@ -207,7 +207,7 @@ namespace Microsoft.Data.SqlClient
                 { DbConnectionStringKeywords.CurrentLanguage, Keywords.CurrentLanguage },
                 { DbConnectionStringKeywords.DataSource, Keywords.DataSource },
                 { DbConnectionStringKeywords.Encrypt, Keywords.Encrypt },
-                { DbConnectionStringKeywords.IsTDSS, Keywords.IsTDSS },
+                { DbConnectionStringKeywords.IsTDS8, Keywords.IsTDS8 },
                 { DbConnectionStringKeywords.HostNameInCertificate, Keywords.HostNameInCertificate },
                 { DbConnectionStringKeywords.Enlist, Keywords.Enlist },
                 { DbConnectionStringKeywords.FailoverPartner, Keywords.FailoverPartner },
@@ -330,8 +330,8 @@ namespace Microsoft.Data.SqlClient
                     return DataSource;
                 case Keywords.Encrypt:
                     return Encrypt;
-                case Keywords.IsTDSS:
-                    return IsTDSS;
+                case Keywords.IsTDS8:
+                    return IsTDS8;
                 case Keywords.HostNameInCertificate:
                     return HostNameInCertificate;
                 case Keywords.Enlist:
@@ -456,8 +456,8 @@ namespace Microsoft.Data.SqlClient
                 case Keywords.Encrypt:
                     _encrypt = DbConnectionStringDefaults.Encrypt;
                     break;
-                case Keywords.IsTDSS:
-                    _isTdss = DbConnectionStringDefaults.IsTDSS;
+                case Keywords.IsTDS8:
+                    _isTDS8 = DbConnectionStringDefaults.IsTDS8;
                     break;
                 case Keywords.HostNameInCertificate:
                     _hostNameInCertificate = DbConnectionStringDefaults.HostNameInCertificate;
@@ -1008,8 +1008,8 @@ namespace Microsoft.Data.SqlClient
                         case Keywords.Encrypt:
                             Encrypt = ConvertToSqlConnectionEncryptionOption(keyword, value);
                             break;
-                        case Keywords.IsTDSS:
-                            IsTDSS = ConvertToBoolean(value);
+                        case Keywords.IsTDS8:
+                            IsTDS8 = ConvertToBoolean(value);
                             break;
                         case Keywords.HostNameInCertificate:
                             HostNameInCertificate = ConvertToString(value);
@@ -1219,18 +1219,18 @@ namespace Microsoft.Data.SqlClient
             }
         }
 
-        /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionStringBuilder.xml' path='docs/members[@name="SqlConnectionStringBuilder"]/IsTdss/*' />
-        [DisplayName(DbConnectionStringKeywords.IsTDSS)]
+        /// <include file='../../../../../../doc/snippets/Microsoft.Data.SqlClient/SqlConnectionStringBuilder.xml' path='docs/members[@name="SqlConnectionStringBuilder"]/IsTDS8/*' />
+        [DisplayName(DbConnectionStringKeywords.IsTDS8)]
         [ResCategory(StringsHelper.ResourceNames.DataCategory_Security)]
         [ResDescription(StringsHelper.ResourceNames.DbConnectionString_Encrypt)]
         [RefreshProperties(RefreshProperties.All)]
-        public bool IsTDSS
+        public bool IsTDS8
         {
-            get => _isTdss;
+            get => _isTDS8;
             set
             {
-                SetValue(DbConnectionStringKeywords.IsTDSS, value);
-                _isTdss = value;
+                SetValue(DbConnectionStringKeywords.IsTDS8, value);
+                _isTDS8 = value;
             }
         }
 

@@ -504,13 +504,11 @@ namespace Microsoft.Data.Common
         /// <returns></returns>
         internal static bool IsValidConnectionStringEncryptionOption(SqlConnectionEncryptionOption value)
         {
-            Debug.Assert(Enum.GetNames(typeof(SqlConnectionEncryptionOption)).Length == 6, "SqlConnectionEncryptionOptions enum has changed, update needed");
-            return value == SqlConnectionEncryptionOption.No ||
-                   value == SqlConnectionEncryptionOption.False ||
-                   value == SqlConnectionEncryptionOption.Optional ||
-                   value == SqlConnectionEncryptionOption.True ||
-                   value == SqlConnectionEncryptionOption.Mandatory ||
-                   value == SqlConnectionEncryptionOption.Strict;
+            Debug.Assert(Enum.GetNames(typeof(SqlConnectionEncryptionOption)).Length == 3, "SqlConnectionEncryptionOptions enum has changed, update needed");
+            return
+                   value is SqlConnectionEncryptionOption.Optional or
+                   SqlConnectionEncryptionOption.Mandatory or
+                   SqlConnectionEncryptionOption.Strict;
         }
 
         /// <summary>
@@ -714,27 +712,20 @@ namespace Microsoft.Data.Common
 
         internal static bool TryToConvertToSqlConnectionEncryptionOption(string value, out SqlConnectionEncryptionOption result)
         {
-            if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.False)))
-            {
-                result = SqlConnectionEncryptionOption.False;
-                return true;
-            }
-            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.No)))
-            {
-                result = SqlConnectionEncryptionOption.No;
-                return true;
-            }
-            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.Optional)))
+
+            // SqlConnectionEncryptionOption has length of 3
+            Debug.Assert(Enum.GetNames(typeof(SqlConnectionEncryptionOption)).Length == 3, "SqlConnectionEncryption enum has changed, update needed. Accepted values are:" +
+                "Optional, false, no, Mandatory, true, yes and Strict");
+            if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.Optional))
+                || StringComparer.InvariantCultureIgnoreCase.Equals(value, "false")
+                || StringComparer.InvariantCultureIgnoreCase.Equals(value, "no"))
             {
                 result = SqlConnectionEncryptionOption.Optional;
                 return true;
             }
-            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.True)))
-            {
-                result = SqlConnectionEncryptionOption.True;
-                return true;
-            }
-            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.Mandatory)))
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, nameof(SqlConnectionEncryptionOption.Mandatory))
+                           || StringComparer.InvariantCultureIgnoreCase.Equals(value, "true")
+                           || StringComparer.InvariantCultureIgnoreCase.Equals(value, "yes"))
             {
                 result = SqlConnectionEncryptionOption.Mandatory;
                 return true;
@@ -755,10 +746,7 @@ namespace Microsoft.Data.Common
         {
             return value switch
             {
-                SqlConnectionEncryptionOption.False => nameof(SqlConnectionEncryptionOption.False),
-                SqlConnectionEncryptionOption.No => nameof(SqlConnectionEncryptionOption.No),
                 SqlConnectionEncryptionOption.Optional => nameof(SqlConnectionEncryptionOption.Optional),
-                SqlConnectionEncryptionOption.True => nameof(SqlConnectionEncryptionOption.True),
                 SqlConnectionEncryptionOption.Mandatory => nameof(SqlConnectionEncryptionOption.Mandatory),
                 SqlConnectionEncryptionOption.Strict => nameof(SqlConnectionEncryptionOption.Strict),
                 _ => null
@@ -901,9 +889,9 @@ namespace Microsoft.Data.Common
                 // the value is not string, try other options
                 SqlConnectionEncryptionOption eValue;
 
-                if (value is SqlConnectionEncryptionOption protocol)
+                if (value is SqlConnectionEncryptionOption encryptOption)
                 {
-                    eValue = protocol;
+                    eValue = encryptOption;
                 }
                 else if (value.GetType().IsEnum)
                 {
@@ -1075,8 +1063,8 @@ namespace Microsoft.Data.Common
 #endif
         internal const string CurrentLanguage = "";
         internal const string DataSource = "";
-        internal const SqlConnectionEncryptionOption Encrypt = SqlConnectionEncryptionOption.True;
-        internal const bool IsTDSS = false;
+        internal const SqlConnectionEncryptionOption Encrypt = SqlConnectionEncryptionOption.Mandatory;
+        internal const bool IsTDS8 = false;
         internal const string HostNameInCertificate = "";
         internal const bool Enlist = true;
         internal const string FailoverPartner = "";
@@ -1140,7 +1128,7 @@ namespace Microsoft.Data.Common
         internal const string ContextConnection = "Context Connection";
         internal const string CurrentLanguage = "Current Language";
         internal const string Encrypt = "Encrypt";
-        internal const string IsTDSS = "IsTDSS";
+        internal const string IsTDS8 = "IsTDS8";
         internal const string HostNameInCertificate = "Host Name In Certificate";
         internal const string FailoverPartner = "Failover Partner";
         internal const string InitialCatalog = "Initial Catalog";

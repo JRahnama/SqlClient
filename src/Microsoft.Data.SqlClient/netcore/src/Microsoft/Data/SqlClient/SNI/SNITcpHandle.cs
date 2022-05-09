@@ -601,12 +601,11 @@ namespace Microsoft.Data.SqlClient.SNI
                     if (_isTDSS)
                     {
 #if NETCOREAPP 
-                        SslApplicationProtocol TDS8 = new("tds/8.0");
 
                         SslClientAuthenticationOptions sslClientOptions = new()
                         {
                             TargetHost = _serverIndicationName,
-                            ApplicationProtocols = new List<SslApplicationProtocol>() { TDS8 },
+                            ApplicationProtocols = new List<SslApplicationProtocol>() { new(TdsEnums.TDS8) }
                             EnabledSslProtocols = SupportedProtocols,
                             ClientCertificates = null,
                         };
