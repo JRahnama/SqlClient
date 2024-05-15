@@ -8,7 +8,7 @@ schedules:
       include:
         - inernal/main
 
-  - cron: "0 19 * * Sun-Thu"
+  - cron: "0 19 * * Mon-Fri"
     displayName: M-F 12:00 PM (UTC - 7:00) PST Mid-day run
     branches:
       include:
@@ -29,17 +29,17 @@ parameters:
 
   - name: targetTagOrCommit
     type: string
-    default: " "
+    default: " "#this value needs to befor updated on runtime to prevent any mistake or conflict
 
   - name: extraPushArgs
     type: string
-    default: "n/a" #this value needs to befor updated on runtime to prevent any mistake or conflict
+    default: " "  # this could be changed to --force 
 
-  - name: merge_from_github_to_azdo
+  - name: merge_from_github_to_azdo # this is set to true by defulat to enable merging from GitHub Repo
     type: boolean
     default: false
 
-  - name: publish_azdo_to_github
+  - name: publish_azdo_to_github # this needs to be done manually so, this is set to false by default
     type: boolean
     default: true
 
