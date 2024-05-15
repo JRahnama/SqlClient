@@ -25,7 +25,7 @@ parameters:
     default: ""
 
 jobs:
-  - job:
+  - job: Merge_Azure_DevOps_To_GitHub
     pool:
       vmImage: $(image)
     steps:
@@ -71,13 +71,13 @@ jobs:
         continueOnError: false
         workingDirectory: ${{ parameters.workingDirectoryName }}
 
-      - pwsh: |
+      - pwsh:
           git remote add github-mirror https://$(PATOwner):$(PATToken)@github.com/${{ parameters.githubRepo }};
         displayName: "Add GitHub remote"
         continueOnError: false
         workingDirectory: ${{ parameters.workingDirectoryName }}
 
-      - pwsh: |
+      - pwsh:
           git fetch github-mirror --tags
         displayName: "Fetch Github all tags"
         continueOnError: false
@@ -96,6 +96,12 @@ jobs:
         displayName: "Validate GitHub repo"
         continueOnError: false
         condition: always()
+      
+      - pwsh: 
+          git push --set-upstream github-mirror ${{ parameters.branchToMirror }} --follow-tags
+        displayName: Push changes to GitHub repo
+        continueOnError: false
+        workingDirectory: ${{ parameters.workingDirectoryName }}
 
       - task: PowerShell@2
         displayName: Broadcast target,branch, commit in metadata
