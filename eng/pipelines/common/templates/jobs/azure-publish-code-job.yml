@@ -41,7 +41,7 @@ jobs:
                 Write-Error "Expected valid branch and GitHub repo in the form of owner/repo"
               }
             Write-Host "##vso[task.setvariable variable=azDORepoName]$azdoRepo"
-            Write-Host "##vso[task.setvariable variable=SourceBranchName]$sourceBranch"           
+            Write-Host "##vso[task.setvariable variable=sourceBranchName]$sourceBranch"           
             Write-Host "Merging branch '$sourceBranch' in Azure DevOps repo '$azDORepo' to GitHub repo '${{ parameters.githubRepo}}' to '${{ parameters.branchToMirror }}'."
         displayName: Calculate Merge Branches | Setup Variables
 
@@ -85,19 +85,20 @@ jobs:
 
       - task: PowerShell@2
         inputs:
+          workingDirectory: ${{ parameters.workingDirectoryName }}
           targetType: inline
-          workingfolder: ${{ parameters.workingDirectoryName }}
           script: |
             if($null -ne (git ls-remote --tags github-mirror ${{ parameters.targetTagOrCommit }}))
             {
               Write-Error "Target repo '$repo' on GitHub already has tag '${{ parameters.targetTagOrCommit }}'!"
             }
-            Write-Host "Publishing Azure Devops' '$(SourceBranchName)' branch to GitHub repo '$repo' to '$branch'"
+            Write-Host "Publishing Azure Devops' '$(sourceBranchName)' branch to GitHub repo '${{ parameters.githubRepo }}' to '${{ parameters.branchToMirror }}'"
         displayName: "Validate GitHub repo"
         continueOnError: false
         condition: always()
 
       - task: PowerShell@2
+        displayName: Broadcast target,branch, commit in metadata
         inputs:
           targetType: inline
           script: |
