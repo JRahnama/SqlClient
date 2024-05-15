@@ -1,0 +1,86 @@
+#################################################################################
+# Licensed to the .NET Foundation under one or more agreements.                 #
+# The .NET Foundation licenses this file to you under the MIT license.          #
+# See the LICENSE file in the project root for more information.                #
+#################################################################################
+parameters:
+  - name: workingDirectoryName
+    type: string
+    default: repo-dir
+
+  - name: githubRepo
+    type: string
+    default: jrahnama/SqlClient
+
+  - name: branchToMirror
+    type: string
+    default: main
+
+  - name: extraPushArgs
+    type: string
+    default: ""
+
+jobs:
+  - job: azure_merge_mirror
+    pool:
+      #name: ${{ parameters.poolName}} pool name can be also added here
+      vmImage: $(image)
+    steps:
+      - task: PowerShell@2
+        inputs:
+          targetType: inline
+          script: |
+            $GithubRepo = "${{ parameters.githubRepo}}".Replace("/", "-");               
+            $targetBranch = "internal/${{ parameters.branchToMirror }}";
+            $azdoRepo =  Split-Path -Leaf (git remote get-url origin)
+            if ($GithubRepo -eq "" -or "${{ parameters.branchToMirror}}" -eq "" -or "$azdoRepo" -eq "")
+               {
+                 Write-Error "Expected valid branch and GitHub repo in the form of owner/repo"
+               }
+            Write-Host "##vso[task.setvariable variable=azDORepoName]$azdoRepo"
+            Write-Host "##vso[task.setvariable variable=targetBranchName]$targetBranch"
+            Write-Verbose "Merging branch '${{ parameters.branchToMirror }}' in GitHub repo '${{ parameters.githubRepo }}' to $targetBranch in Azure DevOps repo '$azdoRepo'."
+        displayName: Setup Variables
+
+      - pwsh: |
+          git clone https://$(PATOwner):$(PATToken)@github.com/${{ parameters.githubRepo}} ${{ parameters.workingDirectoryName }} -b ${{ parameters.branchToMirror }};
+        displayName: "Clone GitHub Repository"
+
+      - pwsh: |
+          git remote add azdo-mirror https://$(AzPATOwner):$(AzPATToken)@dev.azure.com/SqlClientDrivers/ADO.Net/_git/$(azDORepoName);
+        displayName: Add Azure DevOps Mirror Remote
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      - pwsh: |
+          git fetch azdo-mirror
+        displayName: Fetch Azure DevOps Mirror
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      - pwsh: |
+          git checkout -b $(targetBranchName) -t azdo-mirror/$(targetBranchName) || git checkout -b $(targetBranchName) -t azdo-mirror/${{ parameters.branchToMirror }}
+        displayName: "Checkout Azure DevOps Mirror Branch"
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      - pwsh: |
+          git -c user.email="$(msUser)@microsoft.com" -c user.name="SqlClient Azure DevOps" merge origin/${{ parameters.branchToMirror }} -m "Merge in '${{ parameters.branchToMirror }}' changes"
+        displayName: "Merge GitHub Changes to target branch"
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      - pwsh: |
+          git push azdo-mirror HEAD:$(targetBranchName) ${{ parameters.extraPushArgs}}
+        displayName: "Push changes to Azure DevOps repo"
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+      - task: Powershell@2
+        displayName: Broadcast target, branch, commit in metadata
+        continueOnError: true
+        condition: always()
+        inputs:
+          targetType: inline
+          script: |
+            $commit = (git rev-parse HEAD).Substring(0, 7);
+            $target = "${{ parameters.githubRepo}} ${{ parameters.branchToMirror}}".Replace('/', ' ');
+            Write-Verbose $commit;
+            Write-Verbose $target;
+            Write-Host "##vso[build.updatebuildnumber]$target $commit";
+            Write-Host "##vso[build.addbuildtag]$target";
+          workingDirectory: ${{ parameters.workingDirectoryName }}

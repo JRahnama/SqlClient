@@ -1,0 +1,107 @@
+#################################################################################
+# Licensed to the .NET Foundation under one or more agreements.                 #
+# The .NET Foundation licenses this file to you under the MIT license.          #
+# See the LICENSE file in the project root for more information.                #
+#################################################################################
+parameters:
+  - name: workingDirectoryName
+    type: string
+    default: repo-dir
+
+  - name: githubRepo
+    type: string
+    default: jrahnama/SqlClient
+
+  - name: branchToMirror
+    type: string
+    default: main
+
+  - name: extraPushArgs
+    type: string
+    default: ""
+
+  - name: targetTagOrCommit
+    type: string
+    default: ""
+
+jobs:
+  - job:
+    pool:
+      vmImage: $(image)
+    steps:
+      - task: PowerShell@2
+        inputs:
+          targetType: inline
+          script: |
+            $GithubRepo = "${{ parameters.githubRepo}}".Replace("/", "-");
+            $sourceBranch = "internal/${{ parameters.branchToMirror }}";
+            $azdoRepo =  Split-Path -Leaf (git remote get-url origin);
+            if ($GithubRepo -eq "" -or "${{ parameters.branchToMirror}}" -eq "" -or "$azDORepoName" -eq "")
+              {
+                Write-Error "Expected valid branch and GitHub repo in the form of owner/repo"
+              }
+            Write-Host "##vso[task.setvariable variable=azDORepoName]$azdoRepo"
+            Write-Host "##vso[task.setvariable variable=SourceBranchName]$sourceBranch"           
+            Write-Host "Merging branch '$sourceBranch' in Azure DevOps repo '$azDORepoName' to GitHub repo '${{ parameters.githubRepo}}' to '${{ parameters.branchToMirror }}'."
+        displayName: Calculate Merge Branches | Setup Variables
+
+      - pwsh: |
+          git init ${{ parameters.workingDirectoryName }}
+        displayName: "Initialize working diroctory"
+        continueOnError: false
+
+      - pwsh: |
+          git remote add azdo-mirror https://$(AzPATOwner):$(AzPATToken)@dev.azure.com/SqlClientDrivers/ADO.Net/_git/$(azDORepoName);
+        displayName: "Add Azure DevOps remote"
+        continueOnError: false
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      - pwsh: |
+          git fetch --all --tags ${{ parameters.extraPushArgs }};
+        displayName: "Fetch all branches and tags"
+        continueOnError: false
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      # use complete path to avoid possible conflicts
+      # try with tag and commit in order
+      - pwsh: |
+          git checkout refs/tags/${{ parameters.targetTagOrCommit }} -b ${{ parameters.branchToMirror }} || git checkout ${{ parameters.targetTagOrCommit }} -b ${{ parameters.branchToMirror }};
+
+        displayName: "Check out source branch on tag/commit '${{ parameters.targetTagOrCommit }}'"
+        continueOnError: false
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      - pwsh: |
+          git remote add github-mirror https://$(PATOwner):$(PATToken)@github.com/${{ parameters.githubRepo }};
+        displayName: "Add GitHub remote"
+        continueOnError: false
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      - pwsh: |
+          git fetch github-mirror --tags
+        displayName: "Fetch Github all tags"
+        continueOnError: false
+        workingDirectory: ${{ parameters.workingDirectoryName }}
+
+      - task: PowerShell@2
+        inputs:
+          targetType: inline
+          workingfolder: ${{ parameters.workingDirectoryName }}
+          script: |
+            if($null -ne (git ls-remote --tags github-mirror ${{ parameters.targetTagOrCommit }}))
+            {
+              Write-Error "Target repo '$repo' on GitHub already has tag '${{ parameters.targetTagOrCommit }}'!"
+            }
+            Write-Host "Publishing Azure Devops' '$(SourceBranchName)' branch to GitHub repo '$repo' to '$branch'"
+        displayName: "Validate GitHub repo"
+        continueOnError: false
+        condition: always()
+
+      - task: PowerShell@2
+        inputs:
+          targetType: inline
+          script: |
+            $commit = (git rev-parse HEAD).Substring(0, 7);
+            $target = "${{ parameters.githubRepo}} ${{ parameters.branchToMirror}}".Replace('/', ' ');
+            Write-Host "##vso[build.updatebuildnumber]$target $commit"
+            Write-Host "##vso[build.addbuildtag]$target"

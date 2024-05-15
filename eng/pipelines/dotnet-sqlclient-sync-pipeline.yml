@@ -1,0 +1,74 @@
+trigger: none
+pr: none
+
+schedules:
+  - cron: "0 7 * *  Sun-Thu"
+    displayName: M-F 00:00 AM (UTC - 7:00) PST Midnight build
+    branches:
+      include:
+        - inernal/main
+
+  - cron: "0 19 * * Sun-Thu"
+    displayName: M-F 12:00 PM (UTC - 7:00) PST Mid-day run
+    branches:
+      include:
+        - internal/main
+
+parameters:
+  - name: workingDirectoryName
+    type: string
+    default: repo-dir
+
+  - name: githubRepo
+    type: string
+    default: jrahnama/SqlClient
+
+  - name: branchToMirror
+    type: string
+    default: main
+
+  - name: targetTagOrCommit
+    type: string
+    default: ""
+
+  - name: extraPushArgs
+    type: string
+    default: ""
+
+  - name: merge_from_github_to_azdo
+    type: boolean
+    default: true
+
+  - name: publish_azdo_to_github
+    type: boolean
+    default: false
+
+variables:
+  - group: GitHub PAT Tokens
+
+  - name: msUser
+    value: msUser
+
+  - name: image
+    value: windows-latest
+
+stages:
+  - stage: azure_merge_mirror_stage
+    condition: ${{ eq(parameters.merge_from_github_to_azdo, true) }}
+    jobs:
+      - template: common/templates/jobs/azure-merge-mirror-job.yml
+        parameters:
+          WorkingDirectoryName: ${{ parameters.workingDirectoryName }}
+          GithubRepo: ${{ parameters.githubRepo }}
+          BranchToMirror: ${{ parameters.branchToMirror}}
+
+  - stage: github_publish_code
+    condition: ${{ eq(parameters.publish_azdo_to_github, true) }}
+    jobs:
+      - template: common/templates/jobs/azure-publish-code-job.yml
+        parameters:
+          WorkingDirectoryName: ${{ parameters.workingDirectoryName }}
+          GithubRepo: ${{ parameters.githubRepo }}
+          BranchToMirror: ${{ parameters.branchToMirror}}
+          ExtraPushArgs: "${{ parameters.extraPushArgs }}"
+          TargetTagOrCommit: "${{ parameters.targetTagOrCommit }}"
