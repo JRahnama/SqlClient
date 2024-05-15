@@ -29,11 +29,11 @@ parameters:
 
   - name: targetTagOrCommit
     type: string
-    default: ""
+    default: " "
 
   - name: extraPushArgs
     type: string
-    default: ""
+    default: "n/a" #this value needs to befor updated on runtime to prevent any mistake or conflict
 
   - name: merge_from_github_to_azdo
     type: boolean
