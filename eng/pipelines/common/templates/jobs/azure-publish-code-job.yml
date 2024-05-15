@@ -36,13 +36,13 @@ jobs:
             $GithubRepo = "${{ parameters.githubRepo}}".Replace("/", "-");
             $sourceBranch = "internal/${{ parameters.branchToMirror }}";
             $azdoRepo =  Split-Path -Leaf (git remote get-url origin);
-            if ($GithubRepo -eq "" -or "${{ parameters.branchToMirror}}" -eq "" -or "$azDORepoName" -eq "")
+            if ($GithubRepo -eq "" -or "${{ parameters.branchToMirror}}" -eq "" -or "$azDORepo" -eq "")
               {
                 Write-Error "Expected valid branch and GitHub repo in the form of owner/repo"
               }
             Write-Host "##vso[task.setvariable variable=azDORepoName]$azdoRepo"
             Write-Host "##vso[task.setvariable variable=SourceBranchName]$sourceBranch"           
-            Write-Host "Merging branch '$sourceBranch' in Azure DevOps repo '$azDORepoName' to GitHub repo '${{ parameters.githubRepo}}' to '${{ parameters.branchToMirror }}'."
+            Write-Host "Merging branch '$sourceBranch' in Azure DevOps repo '$azDORepo' to GitHub repo '${{ parameters.githubRepo}}' to '${{ parameters.branchToMirror }}'."
         displayName: Calculate Merge Branches | Setup Variables
 
       - pwsh: |
