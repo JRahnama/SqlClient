@@ -37,11 +37,11 @@ parameters:
 
   - name: merge_from_github_to_azdo
     type: boolean
-    default: true
+    default: false
 
   - name: publish_azdo_to_github
     type: boolean
-    default: false
+    default: true
 
 variables:
   - group: GitHub PAT Tokens
