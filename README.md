@@ -21,6 +21,7 @@ The source code of this library is now available under the MIT license.
 
 ## Download
 
+test commit to check triggers
 The Microsoft.Data.SqlClient NuGet package is available on [NuGet.org](https://www.nuget.org/packages/Microsoft.Data.SqlClient/).
 
 ## SNI Package References
