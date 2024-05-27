@@ -16,7 +16,7 @@ The Microsoft.Data.SqlClient package supports the below environments:
 - .NET Framework 4.6.2+
 - .NET Core 3.1+
 - .NET Standard 2.0+
-test
+
 The source code of this library is now available under the MIT license.
 
 ## Download
