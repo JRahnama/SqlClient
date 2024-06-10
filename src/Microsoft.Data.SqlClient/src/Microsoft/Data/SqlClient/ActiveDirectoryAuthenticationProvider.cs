@@ -145,18 +145,14 @@ namespace Microsoft.Data.SqlClient
                 DefaultAzureCredentialOptions defaultAzureCredentialOptions = new()
                 {
                     AuthorityHost = new Uri(authority),
-                    SharedTokenCacheTenantId = audience,
-                    VisualStudioCodeTenantId = audience,
-                    VisualStudioTenantId = audience,
+                    TenantId = audience,
                     ExcludeInteractiveBrowserCredential = true // Force disabled, even though it's disabled by default to respect driver specifications.
                 };
 
                 // Optionally set clientId when available
                 if (clientId is not null)
                 {
-                    defaultAzureCredentialOptions.ManagedIdentityClientId = clientId;
-                    defaultAzureCredentialOptions.SharedTokenCacheUsername = clientId;
-                    defaultAzureCredentialOptions.WorkloadIdentityClientId = clientId;
+                    defaultAzureCredentialOptions.TenantId= clientId;
                 }
                 AccessToken accessToken = await new DefaultAzureCredential(defaultAzureCredentialOptions).GetTokenAsync(tokenRequestContext, cts.Token).ConfigureAwait(false);
                 SqlClientEventSource.Log.TryTraceEvent("AcquireTokenAsync | Acquired access token for Default auth mode. Expiry Time: {0}", accessToken.ExpiresOn);
