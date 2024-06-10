@@ -152,7 +152,9 @@ namespace Microsoft.Data.SqlClient
                 // Optionally set clientId when available
                 if (clientId is not null)
                 {
-                    defaultAzureCredentialOptions.TenantId= clientId;
+                    defaultAzureCredentialOptions.ManagedIdentityClientId = clientId;
+                    defaultAzureCredentialOptions.SharedTokenCacheUsername = clientId;
+                    defaultAzureCredentialOptions.WorkloadIdentityClientId = clientId;
                 }
                 AccessToken accessToken = await new DefaultAzureCredential(defaultAzureCredentialOptions).GetTokenAsync(tokenRequestContext, cts.Token).ConfigureAwait(false);
                 SqlClientEventSource.Log.TryTraceEvent("AcquireTokenAsync | Acquired access token for Default auth mode. Expiry Time: {0}", accessToken.ExpiresOn);
